@@ -1,4 +1,4 @@
-from database.sqlite import Base
+from database.postgresql import Base
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from pydantic import BaseModel, Field
 from passlib.context import CryptContext

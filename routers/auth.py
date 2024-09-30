@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from database.sqlite import SessionLocal
+from database.postgresql import SessionLocal
 from models.todos_model import Users
 from sqlalchemy.orm import Session
 from fastapi import status

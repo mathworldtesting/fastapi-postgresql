@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 import models.todos_model
 from models import todos_model
-from database.sqlite import SessionLocal
+from database.postgresql import SessionLocal
 from .auth import get_current_user
 
 
