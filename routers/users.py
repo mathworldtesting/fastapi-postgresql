@@ -20,6 +20,15 @@ router = APIRouter(
     tags=["users"],
 )
 
+user_01 =  {
+  "username": "yraheem1976",
+  "email": "yraheem1976@yahoo.com",
+  "first_name": "Ammon",
+  "last_name": "Raheem",
+  "password": "string!!ABC1961",
+  "user_role": "string!!ABC1961"
+}
+
 def get_db():
     """
     Yields a database session object.
@@ -59,15 +68,18 @@ async def update_password(user: user_dependency,
                           user_verification: UsersVerification):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed")
+    
     user_model = db.query(Users).filter(Users.id == user.get("id")).first()
     if not user_model:
         raise HTTPException(status_code=404, detail="User not found")
-    user_model = db.query(Users).filter(Users.id == user.get("id")).first()
-    pdb.set_trace()
+    
+    user_model = db.query(Users).filter(Users.id == user.get("id")).first()    
     if not bcrypt_context.verify(user_verification.password, user_model.hashed_password): # type: ignore
         raise HTTPException(status_code=401, detail="Error on password change. Please try again")
 
     user_model.hashed_password = bcrypt_context.hash(user_verification.new_password)
+    if not user_model:
+        raise HTTPException(status_code=404, detail="User not found")
     db.add(user_model)
     db.commit()
     return user_model

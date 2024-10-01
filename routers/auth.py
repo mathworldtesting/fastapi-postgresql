@@ -105,7 +105,7 @@ async def register_users(db: db_dependency,
         hashed_password = bcrypt_context.hash(create_user_request.password),
         role = create_user_request.user_role,        
         is_active = True                
-    )    
+    )        
     db.add(create_user_model)
     db.commit()   
     return {"message": "User created"}
