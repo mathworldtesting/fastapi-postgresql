@@ -76,9 +76,10 @@ async def update_password(user: user_dependency,
     user_model = db.query(Users).filter(Users.id == user.get("id")).first()    
     if not bcrypt_context.verify(user_verification.password, user_model.hashed_password): # type: ignore
         raise HTTPException(status_code=401, detail="Error on password change. Please try again")
-
+    
     user_model.hashed_password = bcrypt_context.hash(user_verification.new_password)
-    if not user_model:
+    
+    if not user_model: 
         raise HTTPException(status_code=404, detail="User not found")
     db.add(user_model)
     db.commit()

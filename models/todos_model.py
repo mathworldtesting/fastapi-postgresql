@@ -12,7 +12,7 @@ class Todos(Base):
     title = Column(String)
     description = Column(String)
     priority = Column(Integer)
-    completed = Column(Boolean, default=False)
+    complete = Column(Boolean, default=False)
     owner_id = Column(Integer, ForeignKey("users.id"))
     
     
@@ -27,4 +27,5 @@ class Users(Base):
     last_name = Column(String)
     is_active = Column(Boolean, default=True)
     role = Column(String)
+    phone_number = Column(String)
     

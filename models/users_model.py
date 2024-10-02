@@ -7,3 +7,4 @@ from passlib.context import CryptContext
 class UsersVerification(BaseModel):
     password: str = Field(min_length=8)
     new_password: str = Field(min_length=8)
+    

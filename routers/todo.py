@@ -37,7 +37,7 @@ class TodoRequest(BaseModel):
     title: str = Field(min_length=3, max_length=40)
     description: str = Field(min_length=3, max_length=100)
     priority: int = Field(gt=0, lt=6)
-    completed: bool = False
+    complete: bool = False
 
 @router.get("/read-all")
 async def read_all(user: user_dependency, db: db_dependency):
@@ -46,7 +46,7 @@ async def read_all(user: user_dependency, db: db_dependency):
 
     This endpoint returns a list of all TODOs in the database. The TODOs are
     returned in the order they were inserted.
-    """
+    """    
     if user is None:
         raise HTTPException(status_code=401, 
                         detail="Authentication Failed")
@@ -105,11 +105,12 @@ async def create_todo(user: user_dependency,
     must be an instance of the `TodoRequest` model.
     """    
     # user = authenticate_user(form_data.username, form_data.password, db)
+    pdb.set_trace()
     if user is None:
         raise HTTPException(status_code=401, 
                             detail="Authentication Failed")    
     todo_model: models.todos_model.Todos = models.todos_model.Todos(**todo_request.model_dump(), owner_id=user.get("id"))
-
+    pdb.set_trace()
     db.add(todo_model)
     db.commit()
     return todo_model
