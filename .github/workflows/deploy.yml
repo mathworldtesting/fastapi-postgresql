@@ -45,8 +45,7 @@ jobs:
             host: ${{ secrets.SSH_HOST }}  # IP address of the server you wish to ssh into
             key: ${{ secrets.SSH_KEY }} # Private key for the server
             username: ${{ secrets.SSH_USERNAME }}  # username of the server you wish to ssh into
-            port: ${{ secrets.SSH_PORT }}  # port of the server you wish to ssh into
-            timeout: 10000
+            port: ${{ secrets.SSH_PORT }}  # port of the server you wish to ssh into            
             script: |
               mkdir apps
               cd apps
