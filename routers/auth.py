@@ -133,7 +133,7 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     
     return { "access_token": token, 
             "token_type": "bearer", 
-            "message": "Successful Authenticatin" }
+            "message": "Successful Authentication" }
 
 def authenticate_user(username: str, password: str, db) -> bool:
     """
