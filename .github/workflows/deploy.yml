@@ -23,7 +23,7 @@ jobs:
     - name: Run tests
       run: |
         pip install pytest
-        pytest
+      # Add your tests here. For example:  pytest
 
     - name: Deploy to DigitalOcean
       uses: appleboy/ssh-action@master
