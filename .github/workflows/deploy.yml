@@ -1,62 +1,65 @@
-name: Build & Deploy
 
+name: Deploy to DigitalOcean
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
-permissions:
-  contents: read
-
-env:
-  REPO_URL: git@github.com:mathworldtesting/fastapi-postgresql.git
-
-jobs:   
-  build:
+jobs:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v2
+
     - name: Set up Python 3.12
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v2
       with:
-        python-version: "3.12"
+        python-version: '3.12'
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Lint with flake8
+        pip install -r requirements.txt
+
+    - name: Run tests
       run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        pip install pytest
+        pytest
 
-
-  deploy: 
-    needs: build
-    runs-on: ubuntu-latest
-    steps:      
-      - name: Setup python 3.12
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.12"
-      - name: install dependencies
-        run: |
-          python -m pip install --upgrade pip
+    - name: Deploy to DigitalOcean
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          # Navigate to your app directory
+          mkdir -p /app
+          cd app
+          
+          # Ensure Git is installed
+          sudo apt-get update
+          sudo apt-get install -y git
+          
+          # Clone the repository
+          git clone ${{ secrets.GITHUB_REPOSITORY }}                    
+          
+          # Ensure Python 3.12 is installed and used
+          pyenv install -s 3.12.0
+          pyenv global 3.12.0
+          
+          # Update dependencies
+          pip install --upgrade pip
           pip install -r requirements.txt
           
-      - name: Deploy
-        uses: appleboy/ssh-action@v0.1.2
-        with:
-            host: ${{ secrets.SSH_HOST }}  # IP address of the server you wish to ssh into
-            username: ${{ secrets.SSH_USERNAME }}  # username of the server you wish to ssh into
-            key: ${{ secrets.SSH_KEY }} # Private key for the server                        
-            script: |
-              mkdir apps
-              cd apps
-              git clone ${{ env.REPO_URL }}
-              ls
-              
+          # Install or upgrade Uvicorn
+          pip install --upgrade uvicorn
+          
+          # Stop the existing Uvicorn process if it's running
+          pkill -f uvicorn || true
+          
+          # Start Uvicorn in the background
+          nohup uvicorn main:app --host 0.0.0.0 --port 8000 &
+          
+          # Optional: Add a small delay and check if Uvicorn is running
+          sleep 5
+          ps aux | grep uvicorn
