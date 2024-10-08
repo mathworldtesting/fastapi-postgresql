@@ -39,16 +39,24 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:      
-      - name: Deploy Pyhton app
+      - name: Setup python 3.12
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.12"
+      - name: install dependencies
+        run: |
+          pip -m pip install --upgrade pip
+          pip install -r requirements.txt
+          
+      - name: Deploy
         uses: appleboy/ssh-action@v0.1.2
         with:
             host: ${{ secrets.SSH_HOST }}  # IP address of the server you wish to ssh into
-            key: ${{ secrets.SSH_KEY }} # Private key for the server
             username: ${{ secrets.SSH_USERNAME }}  # username of the server you wish to ssh into
-            port: ${{ secrets.SSH_PORT }}  # port of the server you wish to ssh into            
+            key: ${{ secrets.SSH_KEY }} # Private key for the server                        
             script: |
               mkdir apps
               cd apps
-              git clone git@github.com:mathworldtesting/fastapi-postgresql.git
+              git clone ${{ env.REPO_URL }}
               ls
               
