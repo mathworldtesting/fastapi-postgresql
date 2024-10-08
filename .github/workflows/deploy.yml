@@ -10,18 +10,17 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-
     - name: Deploy to DigitalOcean
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.SSH_HOST }} # the public IP address of your DigitalOcean instance
-        username: ${{ secrets.SSH_USERNAME }} # the user we created for our digitalocean instance
-        key: ${{ secrets.SSH_KEY }} # the private key we created for our digitalocean instance
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_KEY }}
+        key: ${{ secrets.SSH_USERNAME }}
         script: |
+          # Update package list and install Python 3.12 and venv
+          sudo apt update
+          sudo apt install -y python3.12 python3.12-venv
+
           # Ensure the app directory exists
           mkdir -p ~/app
           cd ~/app
@@ -35,15 +34,16 @@ jobs:
             cd fastapi-postgresql
           fi
           
-          # Ensure Python and pip are available
-          python3 -m venv venv
+          # Create and activate virtual environment
+          python3.12 -m venv venv
           source venv/bin/activate
           
-          # Update dependencies
+          # Update pip and install dependencies
           pip install --upgrade pip
           pip install -r requirements.txt
           
           # Apply any database migrations (if using Alembic)
+          pip install alembic
           alembic upgrade head
           
           # Restart the application (adjust as needed)
