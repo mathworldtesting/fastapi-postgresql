@@ -33,7 +33,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         script: |
           # Navigate to your app directory
-          mkdir -p /app
+          sudo mkdir -p /app
           cd app
           
           # Ensure Git is installed
