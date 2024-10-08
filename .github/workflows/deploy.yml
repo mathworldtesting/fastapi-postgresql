@@ -26,12 +26,12 @@ jobs:
           cd ~/app
           
           # Clone or pull the repository
-          if [ -d "fastapi-postgresql" ]; then
-            cd fastapi-postgresql
+          if [ -d "app" ]; then
+            cd app
             git pull origin main
           else
             git clone https://github.com/mathworldtesting/fastapi-postgresql.git
-            cd fastapi-postgresql
+            cd app
           fi
           
           # Create and activate virtual environment
