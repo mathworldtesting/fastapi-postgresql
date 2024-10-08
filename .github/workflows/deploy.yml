@@ -14,8 +14,8 @@ jobs:
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_KEY }}
-        key: ${{ secrets.SSH_USERNAME }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
         script: |
           # Update package list and install Python 3.12 and venv
           sudo apt update
